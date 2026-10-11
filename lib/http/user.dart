@@ -57,13 +57,16 @@ abstract final class UserHttp {
 
   // 稍后再看
   static Future<LoadingState<LaterData>> seeYouLater({
+    Account? account,
     required int page,
     int viewed = 0,
     String keyword = '',
     bool asc = false,
   }) async {
+    account ??= Accounts.main;
     final res = await Request().get(
       Api.seeYouLater,
+      options: Options(extra: {'account': account}),
       queryParameters: await WbiSign.makSign({
         'pn': page,
         'ps': 20,
@@ -190,22 +193,30 @@ abstract final class UserHttp {
   }
 
   // 移除已观看
-  static Future<LoadingState<void>> toViewDel({required String aids}) async {
+  static Future<LoadingState<void>> toViewDel({
+    required String aids,
+    Account? account,
+    bool showToast = true,
+  }) async {
+    account ??= Accounts.main;
     final Map<String, dynamic> params = {
-      'csrf': Accounts.main.csrf,
+      'csrf': account.csrf,
       'resources': aids,
     };
     final res = await Request().post(
       Api.toViewDel,
       data: params,
-      options: Options(contentType: Headers.formUrlEncodedContentType),
+      options: Options(
+        contentType: Headers.formUrlEncodedContentType,
+        extra: {'account': account},
+      ),
     );
     if (res.data['code'] == 0) {
-      SmartDialog.showToast('yeah！成功移除');
+      if (showToast) SmartDialog.showToast('yeah！成功移除');
       return const Success(null);
     } else {
-      SmartDialog.showToast(res.data['message'].toString());
-      return const Error(null);
+      if (showToast) SmartDialog.showToast(res.data['message'].toString());
+      return Error(res.data['message'].toString());
     }
   }
 

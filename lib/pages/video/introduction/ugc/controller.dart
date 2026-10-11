@@ -25,6 +25,7 @@ import 'package:PiliPlus/models_new/video/video_detail/ugc_season.dart';
 import 'package:PiliPlus/pages/common/common_intro_controller.dart';
 import 'package:PiliPlus/pages/dynamics_repost/view.dart';
 import 'package:PiliPlus/pages/video/related/controller.dart';
+import 'package:PiliPlus/utils/watch_later_focus.dart';
 import 'package:PiliPlus/pages/video/reply/controller.dart';
 import 'package:PiliPlus/plugin/pl_player/models/play_repeat.dart';
 import 'package:PiliPlus/services/service_locator.dart';
@@ -678,6 +679,7 @@ class UgcIntroController extends CommonIntroController with ReloadMixin {
       );
 
       int nextIndex = currentIndex + 1;
+      if (WatchLaterFocus.enabled && currentIndex < 0) return false;
 
       if (!isPart &&
           videoDetailCtr.isPlayAll &&

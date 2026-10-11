@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:PiliPlus/utils/watch_later_focus.dart';
+
 import 'package:PiliPlus/common/widgets/gesture/horizontal_drag_gesture_recognizer.dart'
     show deviceTouchSlop;
 import 'package:PiliPlus/common/widgets/pair.dart';
@@ -376,12 +378,15 @@ abstract final class Pref {
       _setting.get(SettingBoxKey.showViewPoints, defaultValue: true);
 
   static bool get showRelatedVideo =>
+      !WatchLaterFocus.enabled &&
       _setting.get(SettingBoxKey.showRelatedVideo, defaultValue: true);
 
   static bool get showVideoReply =>
+      !WatchLaterFocus.enabled &&
       _setting.get(SettingBoxKey.showVideoReply, defaultValue: true);
 
   static bool get showBangumiReply =>
+      !WatchLaterFocus.enabled &&
       _setting.get(SettingBoxKey.showBangumiReply, defaultValue: true);
 
   static bool get alwaysExpandIntroPanel =>
@@ -535,6 +540,7 @@ abstract final class Pref {
   );
 
   static bool get showFSActionItem =>
+      !WatchLaterFocus.enabled &&
       _setting.get(SettingBoxKey.showFSActionItem, defaultValue: true);
 
   static bool get enableShrinkVideoSize =>
@@ -870,6 +876,7 @@ abstract final class Pref {
       _video.get(VideoBoxKey.longPressSpeedDefault, defaultValue: 3.0);
 
   static bool get defaultShowComment =>
+      !WatchLaterFocus.enabled &&
       _setting.get(SettingBoxKey.defaultShowComment, defaultValue: false);
 
   static bool get enableTrending =>
@@ -884,11 +891,12 @@ abstract final class Pref {
   static double get defaultToastOp =>
       _setting.get(SettingBoxKey.defaultToastOp, defaultValue: 1.0);
 
-  static PlayRepeat get playRepeat =>
-      PlayRepeat.values[_video.get(
-        VideoBoxKey.playRepeat,
-        defaultValue: PlayRepeat.pause.index,
-      )];
+  static PlayRepeat get playRepeat => WatchLaterFocus.enabled
+      ? PlayRepeat.listOrder
+      : PlayRepeat.values[_video.get(
+          VideoBoxKey.playRepeat,
+          defaultValue: PlayRepeat.pause.index,
+        )];
 
   static int get cacheVideoFit =>
       _video.get(VideoBoxKey.cacheVideoFit, defaultValue: 1);

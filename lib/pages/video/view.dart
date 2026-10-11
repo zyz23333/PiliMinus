@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'dart:math';
 
 import 'package:PiliPlus/common/assets.dart';
+import 'package:PiliPlus/utils/watch_later_focus.dart';
 import 'package:PiliPlus/common/style.dart';
 import 'package:PiliPlus/common/widgets/custom_icon.dart';
 import 'package:PiliPlus/common/widgets/flutter/pop_scope.dart';
@@ -831,6 +832,15 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
   }
 
   Widget childWhenDisabledLandscapeInner(bool isFullScreen) {
+    if (WatchLaterFocus.enabled) {
+      final availableHeight = maxHeight - padding.vertical;
+      final ratio = videoDetailController.isVertical.value
+          ? 1 / Style.aspectRatio16x9
+          : Style.aspectRatio16x9;
+      return childSplit(
+        min(ratio, (maxWidth - padding.horizontal) * 0.65 / availableHeight),
+      );
+    }
     if (enableVerticalExpand) {
       return Obx(() {
         if (videoDetailController.isVertical.value && !isPortrait) {
@@ -1160,51 +1170,55 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
     return const SizedBox.shrink();
   });
 
-  Widget _moreBtn(Color color, {List<Shadow>? shadows}) => PopupMenuButton(
-    icon: Icon(
-      size: 22,
-      Icons.more_vert,
-      color: color,
-      shadows: shadows,
-    ),
-    itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-      PopupMenuItem(
-        onTap: introController.viewLater,
-        child: const Text('稍后再看'),
-      ),
-      if (videoDetailController.epId == null)
-        PopupMenuItem(
-          onTap: () => videoDetailController.showNoteList(context),
-          child: const Text('查看笔记'),
-        ),
-      if (!videoDetailController.isFileSource)
-        PopupMenuItem(
-          onTap: () => videoDetailController.onDownload(this.context),
-          child: const Text('缓存视频'),
-        ),
-      if (videoDetailController.cover.value.isNotEmpty)
-        PopupMenuItem(
-          onTap: () =>
-              ImageUtils.downloadImg([videoDetailController.cover.value]),
-          child: const Text('保存封面'),
-        ),
-      if (!videoDetailController.isFileSource && videoDetailController.isUgc)
-        PopupMenuItem(
-          onTap: videoDetailController.toAudioPage,
-          child: const Text('听音频'),
-        ),
-      PopupMenuItem(
-        onTap: () {
-          if (!Accounts.main.isLogin) {
-            SmartDialog.showToast('账号未登录');
-          } else {
-            PageUtils.reportVideo(videoDetailController.aid);
-          }
-        },
-        child: const Text('举报'),
-      ),
-    ],
-  );
+  Widget _moreBtn(Color color, {List<Shadow>? shadows}) =>
+      WatchLaterFocus.enabled
+      ? const SizedBox.shrink()
+      : PopupMenuButton(
+          icon: Icon(
+            size: 22,
+            Icons.more_vert,
+            color: color,
+            shadows: shadows,
+          ),
+          itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+            PopupMenuItem(
+              onTap: introController.viewLater,
+              child: const Text('稍后再看'),
+            ),
+            if (videoDetailController.epId == null)
+              PopupMenuItem(
+                onTap: () => videoDetailController.showNoteList(context),
+                child: const Text('查看笔记'),
+              ),
+            if (!videoDetailController.isFileSource)
+              PopupMenuItem(
+                onTap: () => videoDetailController.onDownload(this.context),
+                child: const Text('缓存视频'),
+              ),
+            if (videoDetailController.cover.value.isNotEmpty)
+              PopupMenuItem(
+                onTap: () =>
+                    ImageUtils.downloadImg([videoDetailController.cover.value]),
+                child: const Text('保存封面'),
+              ),
+            if (!videoDetailController.isFileSource &&
+                videoDetailController.isUgc)
+              PopupMenuItem(
+                onTap: videoDetailController.toAudioPage,
+                child: const Text('听音频'),
+              ),
+            PopupMenuItem(
+              onTap: () {
+                if (!Accounts.main.isLogin) {
+                  SmartDialog.showToast('账号未登录');
+                } else {
+                  PageUtils.reportVideo(videoDetailController.aid);
+                }
+              },
+              child: const Text('举报'),
+            ),
+          ],
+        );
 
   Widget plPlayer({
     required double width,
@@ -1282,7 +1296,11 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
       child = PlayerFocus(
         plPlayerController: videoDetailController.plPlayerController,
         introController: introController,
-        onSendDanmaku: videoDetailController.showShootDanmakuSheet,
+        onSendDanmaku: () {
+          if (!WatchLaterFocus.enabled) {
+            videoDetailController.showShootDanmakuSheet();
+          }
+        },
         canPlay: () {
           if (videoDetailController.autoPlay) {
             return true;
@@ -1402,22 +1420,23 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
                   ),
                 ),
               ),
-            SizedBox(
-              height: 32,
-              child: TextButton(
-                style: const ButtonStyle(
-                  padding: WidgetStatePropertyAll(.zero),
-                ),
-                onPressed: videoDetailController.showShootDanmakuSheet,
-                child: Text(
-                  '发弹幕',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: colorScheme.onSurfaceVariant,
+            if (!WatchLaterFocus.enabled)
+              SizedBox(
+                height: 32,
+                child: TextButton(
+                  style: const ButtonStyle(
+                    padding: WidgetStatePropertyAll(.zero),
+                  ),
+                  onPressed: videoDetailController.showShootDanmakuSheet,
+                  child: Text(
+                    '发弹幕',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
               ),
-            ),
             SizedBox.square(
               dimension: 38,
               child: Obx(
@@ -1764,7 +1783,7 @@ class _VideoDetailPageVState extends State<VideoDetailPageV>
         isSupportReverse: false,
       ),
     );
-    if (pgcIntroController.pgcItem.hasSeasons) {
+    if (!WatchLaterFocus.enabled && pgcIntroController.pgcItem.hasSeasons) {
       child = Column(
         children: [
           Padding(

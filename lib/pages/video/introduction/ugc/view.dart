@@ -1,4 +1,5 @@
 import 'package:PiliPlus/common/assets.dart';
+import 'package:PiliPlus/utils/watch_later_focus.dart';
 import 'package:PiliPlus/common/constants.dart';
 import 'package:PiliPlus/common/style.dart';
 import 'package:PiliPlus/common/widgets/animated_height.dart';
@@ -103,6 +104,51 @@ class _UgcIntroPanelState extends State<UgcIntroPanel> {
         () {
           final videoDetail = introController.videoDetail.value;
           final isLoading = videoDetail.bvid == null;
+          if (WatchLaterFocus.enabled) {
+            return SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    videoDetail.title ?? '正在读取视频信息…',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  if (videoDetail.owner?.name case final name?)
+                    Text('UP 主：$name'),
+                  if (!introController.status.value)
+                    TextButton.icon(
+                      onPressed: () {
+                        introController.queryVideoIntro();
+                        videoDetailCtr.queryVideoUrl();
+                      },
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('重新加载视频'),
+                    ),
+                  if (!isLoading &&
+                      (isPortrait ||
+                          !videoDetailCtr
+                              .plPlayerController
+                              .horizontalSeasonPanel) &&
+                      videoDetail.hasSeason)
+                    SeasonPanel(
+                      key: ValueKey(videoDetail),
+                      heroTag: widget.heroTag,
+                      showEpisodes: widget.showEpisodes,
+                      ugcIntroController: introController,
+                    ),
+                  if (videoDetail.hasParts)
+                    PagesPanel(
+                      key: ValueKey(videoDetail),
+                      heroTag: widget.heroTag,
+                      ugcIntroController: introController,
+                      bvid: introController.bvid,
+                      showEpisodes: widget.showEpisodes,
+                    ),
+                ],
+              ),
+            );
+          }
           return SliverToBoxAdapter(
             child: GestureDetector(
               onTap: () {

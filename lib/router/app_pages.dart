@@ -25,6 +25,7 @@ import 'package:PiliPlus/pages/history_search/view.dart';
 import 'package:PiliPlus/pages/home/view.dart';
 import 'package:PiliPlus/pages/hot/view.dart';
 import 'package:PiliPlus/pages/later/view.dart';
+import 'package:PiliPlus/pages/later/focus_view.dart';
 import 'package:PiliPlus/pages/later_search/view.dart';
 import 'package:PiliPlus/pages/live_dm_block/view.dart';
 import 'package:PiliPlus/pages/live_room/view.dart';
@@ -59,6 +60,7 @@ import 'package:PiliPlus/pages/setting/pages/font_setting.dart';
 import 'package:PiliPlus/pages/setting/pages/logs.dart';
 import 'package:PiliPlus/pages/setting/pages/play_speed_set.dart';
 import 'package:PiliPlus/pages/setting/view.dart';
+import 'package:PiliPlus/pages/setting/focus_view.dart';
 import 'package:PiliPlus/pages/settings_search/view.dart';
 import 'package:PiliPlus/pages/space_setting/view.dart';
 import 'package:PiliPlus/pages/sponsor_block/view.dart';
@@ -69,9 +71,27 @@ import 'package:PiliPlus/pages/webview/view.dart';
 import 'package:PiliPlus/pages/whisper/view.dart';
 import 'package:PiliPlus/pages/whisper_detail/view.dart';
 import 'package:get/get.dart';
+import 'package:PiliPlus/utils/watch_later_focus.dart';
 
 class Routes {
-  static final List<GetPage<dynamic>> getPages = [
+  static List<GetPage<dynamic>> get getPages =>
+      WatchLaterFocus.enabled ? _focusPages : _allPages;
+
+  static final List<GetPage<dynamic>> _focusPages = [
+    GetPage(name: '/', page: () => const LaterFocusPage()),
+    GetPage(name: '/later', page: () => const LaterFocusPage()),
+    GetPage(name: '/loginPage', page: () => const LoginPage()),
+    GetPage(name: '/videoV', page: () => const VideoDetailPageV()),
+    GetPage(name: '/setting', page: () => const FocusSettingPage()),
+    GetPage(name: '/colorSetting', page: () => const ColorSelectPage()),
+    GetPage(name: '/fontSetting', page: () => const FontSettingPage()),
+    GetPage(name: '/displayModeSetting', page: () => const SetDisplayMode()),
+    GetPage(name: '/playSpeedSet', page: () => const PlaySpeedPage()),
+    GetPage(name: '/danmakuBlock', page: () => const DanmakuBlockPage()),
+    GetPage(name: '/sponsorBlock', page: () => const SponsorBlockPage()),
+  ];
+
+  static final List<GetPage<dynamic>> _allPages = [
     GetPage(name: '/', page: () => const MainApp()),
     // 首页(推荐)
     GetPage(name: '/home', page: () => const HomePage()),

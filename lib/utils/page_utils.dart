@@ -562,6 +562,7 @@ abstract final class PageUtils {
     int? progress, // milliseconds
     int? aid,
     bool off = false,
+    bool Function()? canNavigate,
   }) {
     RegExpMatch? match = _pgcRegex.firstMatch(uri);
     if (match != null) {
@@ -573,6 +574,7 @@ abstract final class PageUtils {
           epId: isSeason ? null : id,
           progress: progress,
           off: off,
+          canNavigate: canNavigate,
         );
       } else {
         viewPugv(
@@ -581,6 +583,7 @@ abstract final class PageUtils {
           aid: aid,
           progress: progress,
           off: off,
+          canNavigate: canNavigate,
         );
       }
       return true;
@@ -609,11 +612,13 @@ abstract final class PageUtils {
     dynamic epId,
     int? progress, // milliseconds
     bool off = false,
+    bool Function()? canNavigate,
   }) async {
     try {
       SmartDialog.showLoading(msg: '资源获取中');
       final res = await SearchHttp.pgcInfo(seasonId: seasonId, epId: epId);
       SmartDialog.dismiss();
+      if (canNavigate != null && !canNavigate()) return;
       if (res case Success(:final response)) {
         final episodes = response.episodes;
         final hasEpisode = episodes != null && episodes.isNotEmpty;
@@ -711,11 +716,13 @@ abstract final class PageUtils {
     int? aid,
     int? progress, // milliseconds
     bool off = false,
+    bool Function()? canNavigate,
   }) async {
     try {
       SmartDialog.showLoading(msg: '资源获取中');
       final res = await SearchHttp.pugvInfo(seasonId: seasonId, epId: epId);
       SmartDialog.dismiss();
+      if (canNavigate != null && !canNavigate()) return;
       if (res case Success(:final response)) {
         final episodes = response.episodes;
         if (episodes != null && episodes.isNotEmpty) {

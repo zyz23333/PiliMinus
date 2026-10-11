@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:PiliPlus/common/style.dart';
+import 'package:PiliPlus/utils/watch_later_focus.dart';
 import 'package:PiliPlus/common/widgets/badge.dart';
 import 'package:PiliPlus/common/widgets/button/icon_button.dart';
 import 'package:PiliPlus/common/widgets/dialog/dialog.dart';
@@ -68,6 +69,34 @@ class _PgcIntroPageState extends State<PgcIntroPage> {
   Widget build(BuildContext context) {
     final item = introController.pgcItem;
     final isPortrait = widget.isPortrait;
+    if (WatchLaterFocus.enabled) {
+      return SliverPadding(
+        padding: const EdgeInsets.all(Style.safeSpace),
+        sliver: SliverToBoxAdapter(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                item.title ?? '视频',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              if (item.upInfo?.uname case final name?) Text('UP 主：$name'),
+              if (isPortrait ||
+                  !videoDetailCtr.plPlayerController.horizontalSeasonPanel)
+                if (item.hasEpisodes)
+                  PgcPanel(
+                    heroTag: widget.heroTag,
+                    pages: item.episodes!,
+                    cid: videoDetailCtr.cid.value,
+                    onChangeEpisode: introController.onChangeEpisode,
+                    showEpisodes: widget.showEpisodes,
+                    newEp: item.newEp,
+                  ),
+            ],
+          ),
+        ),
+      );
+    }
     Widget sliver = SliverToBoxAdapter(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

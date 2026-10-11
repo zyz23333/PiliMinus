@@ -1,4 +1,6 @@
 {
+    "dart.flutterSdkPath": ".fvm/flutter_sdk",
+    "dart.runPubGetOnPubspecChanges": "never",
     "editor.formatOnSave": true,
     "[dart]": {
         "editor.formatOnType": true

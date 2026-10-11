@@ -4,6 +4,7 @@ import 'dart:io' show Platform, File;
 import 'dart:typed_data' show Uint8List;
 
 import 'package:PiliPlus/common/constants.dart';
+import 'package:PiliPlus/utils/watch_later_focus.dart';
 import 'package:PiliPlus/common/widgets/button/icon_button.dart';
 import 'package:PiliPlus/common/widgets/custom_icon.dart';
 import 'package:PiliPlus/common/widgets/dialog/report.dart';
@@ -660,23 +661,24 @@ class HeaderControlState extends State<HeaderControl>
                     ),
                   ),
                 ],
-                PopupListTile(
-                  dense: true,
-                  leading: const Icon(Icons.repeat, size: 20),
-                  title: const Text('播放顺序', style: titleStyle),
-                  titleStyle: theme.textTheme.bodyLarge,
-                  value: () {
-                    final value = plPlayerController.playRepeat;
-                    return (value, value.label);
-                  },
-                  itemBuilder: (_) => enumItemBuilder(PlayRepeat.values),
-                  onSelected: (value, setState) {
-                    plPlayerController.setPlayRepeat(value);
-                    setState();
-                  },
-                  descPosType: .subtitle,
-                  descStyle: subTitleStyle,
-                ),
+                if (!WatchLaterFocus.enabled)
+                  PopupListTile(
+                    dense: true,
+                    leading: const Icon(Icons.repeat, size: 20),
+                    title: const Text('播放顺序', style: titleStyle),
+                    titleStyle: theme.textTheme.bodyLarge,
+                    value: () {
+                      final value = plPlayerController.playRepeat;
+                      return (value, value.label);
+                    },
+                    itemBuilder: (_) => enumItemBuilder(PlayRepeat.values),
+                    onSelected: (value, setState) {
+                      plPlayerController.setPlayRepeat(value);
+                      setState();
+                    },
+                    descPosType: .subtitle,
+                    descStyle: subTitleStyle,
+                  ),
                 ListTile(
                   dense: true,
                   onTap: () {
@@ -784,19 +786,20 @@ class HeaderControlState extends State<HeaderControl>
                     leading: const Icon(Icons.info_outline, size: 20),
                     onTap: () => showPlayerInfo(context, player: player),
                   ),
-                ListTile(
-                  dense: true,
-                  onTap: () {
-                    if (!Accounts.main.isLogin) {
-                      SmartDialog.showToast('账号未登录');
-                      return;
-                    }
-                    Get.back();
-                    PageUtils.reportVideo(videoDetailCtr.aid);
-                  },
-                  leading: const Icon(Icons.error_outline, size: 20),
-                  title: const Text('举报', style: titleStyle),
-                ),
+                if (!WatchLaterFocus.enabled)
+                  ListTile(
+                    dense: true,
+                    onTap: () {
+                      if (!Accounts.main.isLogin) {
+                        SmartDialog.showToast('账号未登录');
+                        return;
+                      }
+                      Get.back();
+                      PageUtils.reportVideo(videoDetailCtr.aid);
+                    },
+                    leading: const Icon(Icons.error_outline, size: 20),
+                    title: const Text('举报', style: titleStyle),
+                  ),
               ],
             ),
           ),
@@ -1867,20 +1870,21 @@ class HeaderControlState extends State<HeaderControl>
                         : const SizedBox.shrink(),
                   ),
                 if (!isPortrait || isFullScreen || PlatformUtils.isDesktop) ...[
-                  SizedBox(
-                    width: btnWidth,
-                    height: btnHeight,
-                    child: IconButton(
-                      tooltip: '发弹幕',
-                      style: btnStyle,
-                      onPressed: videoDetailCtr.showShootDanmakuSheet,
-                      icon: const Icon(
-                        Icons.comment_outlined,
-                        size: 19,
-                        color: Colors.white,
+                  if (!WatchLaterFocus.enabled)
+                    SizedBox(
+                      width: btnWidth,
+                      height: btnHeight,
+                      child: IconButton(
+                        tooltip: '发弹幕',
+                        style: btnStyle,
+                        onPressed: videoDetailCtr.showShootDanmakuSheet,
+                        icon: const Icon(
+                          Icons.comment_outlined,
+                          size: 19,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
                   SizedBox(
                     width: btnWidth,
                     height: btnHeight,

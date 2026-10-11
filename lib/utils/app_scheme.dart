@@ -26,6 +26,7 @@ import 'package:PiliPlus/utils/request_utils.dart';
 import 'package:PiliPlus/utils/url_utils.dart';
 import 'package:PiliPlus/utils/utils.dart';
 import 'package:app_links/app_links.dart';
+import 'package:PiliPlus/utils/watch_later_focus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
@@ -39,6 +40,7 @@ abstract final class PiliScheme {
   static final _prefixRegex = RegExp(r'^\S+://');
 
   static void init() {
+    if (WatchLaterFocus.enabled) return;
     // Register our protocol only on Windows platform
     // registerProtocolHandler('bilibili');
     appLinks = AppLinks();
@@ -75,6 +77,7 @@ abstract final class PiliScheme {
     int? businessId,
     int? oid,
   }) {
+    if (WatchLaterFocus.enabled) return Future.value(false);
     try {
       if (url.startsWith('//')) {
         url = 'https:$url';
@@ -103,6 +106,7 @@ abstract final class PiliScheme {
     int? businessId,
     int? oid,
   }) async {
+    if (WatchLaterFocus.enabled) return false;
     // if (kDebugMode) debugPrint('onAppLink: $uri');
 
     final String scheme = uri.scheme;

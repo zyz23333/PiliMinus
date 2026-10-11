@@ -3,6 +3,7 @@ import 'dart:math' show max;
 
 import 'package:PiliPlus/common/widgets/dialog/simple_dialog_option.dart';
 import 'package:PiliPlus/http/constants.dart';
+import 'package:PiliPlus/utils/watch_later_focus.dart';
 import 'package:PiliPlus/http/fav.dart';
 import 'package:PiliPlus/http/loading_state.dart';
 import 'package:PiliPlus/http/pgc.dart';
@@ -373,6 +374,7 @@ class PgcIntroController extends CommonIntroController {
         (e) => e.cid == videoDetailCtr.cid.value,
       );
       int nextIndex = currentIndex + 1;
+      if (WatchLaterFocus.enabled && currentIndex < 0) return false;
       // 列表循环
       if (nextIndex >= episodes.length) {
         if (playRepeat == PlayRepeat.listCycle) {

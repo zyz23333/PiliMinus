@@ -5,6 +5,7 @@ import 'dart:math' show max, min;
 import 'dart:ui' as ui;
 
 import 'package:PiliPlus/common/assets.dart';
+import 'package:PiliPlus/utils/watch_later_focus.dart';
 import 'package:PiliPlus/http/browser_ua.dart';
 import 'package:PiliPlus/http/constants.dart';
 import 'package:PiliPlus/http/loading_state.dart';
@@ -1602,6 +1603,7 @@ class PlPlayerController with BlockConfigMixin, AudioNormalizationMixin {
   }
 
   void setPlayRepeat(PlayRepeat type) {
+    if (WatchLaterFocus.enabled) return;
     playRepeat = type;
     if (!tempPlayerConf) video.put(VideoBoxKey.playRepeat, type.index);
   }

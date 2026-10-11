@@ -11,6 +11,7 @@ import 'package:PiliPlus/models/common/account_type.dart';
 import 'package:PiliPlus/models/login/model.dart';
 import 'package:PiliPlus/pages/login/geetest/geetest_webview_dialog.dart';
 import 'package:PiliPlus/utils/accounts.dart';
+import 'package:PiliPlus/utils/watch_later_focus.dart';
 import 'package:PiliPlus/utils/accounts/account.dart';
 import 'package:PiliPlus/utils/platform_utils.dart';
 import 'package:PiliPlus/utils/theme_utils.dart';
@@ -169,7 +170,7 @@ class LoginPageController extends GetxController
       );
       if (result.data['code'] == 0) {
         try {
-          await LoginAccount(
+          final account = LoginAccount(
             BiliCookieJar.fromJson(
               Map.fromEntries(
                 cookieTextController.text.split(';').map((item) {
@@ -180,8 +181,13 @@ class LoginPageController extends GetxController
             ),
             null,
             null,
-          ).onChange();
-          if (!Accounts.main.isLogin) await switchAccountDialog(Get.context!);
+          );
+          await account.onChange();
+          if (WatchLaterFocus.enabled) {
+            await _activateFocusAccount(account);
+          } else if (!Accounts.main.isLogin) {
+            await switchAccountDialog(Get.context!);
+          }
           SmartDialog.showToast('登录成功');
           Get.back();
         } catch (e) {
@@ -625,6 +631,10 @@ class LoginPageController extends GetxController
       tokenInfo['refresh_token'],
     );
     await Future.wait([?account.onChange(), AnonymousAccount().delete()]);
+    if (WatchLaterFocus.enabled) {
+      await _activateFocusAccount(account);
+      return;
+    }
     for (int i = 0; i < AccountType.values.length; i++) {
       if (Accounts.accountMode[i].mid == account.mid) {
         Accounts.accountMode[i] = account;
@@ -636,6 +646,15 @@ class LoginPageController extends GetxController
       SmartDialog.showToast('登录成功, 请先设置账号模式');
       await switchAccountDialog(Get.context!);
     }
+  }
+
+  static Future<void> _activateFocusAccount(LoginAccount account) async {
+    for (final role in AccountType.values.where(
+      (role) => role != AccountType.main,
+    )) {
+      await Accounts.set(role, account);
+    }
+    await Accounts.set(AccountType.main, account);
   }
 
   static Future<void>? switchAccountDialog(BuildContext context) {

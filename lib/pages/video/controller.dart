@@ -70,6 +70,7 @@ import 'package:dio/dio.dart' show Options;
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart'
     show ExtendedNestedScrollViewState;
 import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:PiliPlus/utils/watch_later_focus.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:get/get.dart';
@@ -387,7 +388,9 @@ class VideoDetailController extends GetxController
     cover = RxString(args['cover'] ?? '');
     isVertical = RxBool(args['isVertical'] ?? false);
 
-    sourceType = args['sourceType'] ?? SourceType.normal;
+    sourceType = WatchLaterFocus.enabled
+        ? SourceType.normal
+        : args['sourceType'] ?? SourceType.normal;
     isFileSource = sourceType == SourceType.file;
     isPlayAll = sourceType != SourceType.normal && !isFileSource;
     if (isFileSource) {
@@ -401,7 +404,7 @@ class VideoDetailController extends GetxController
     tabCtr = TabController(
       length: 2,
       vsync: this,
-      initialIndex: Pref.defaultShowComment ? 1 : 0,
+      initialIndex: showReply && Pref.defaultShowComment ? 1 : 0,
     );
   }
 
