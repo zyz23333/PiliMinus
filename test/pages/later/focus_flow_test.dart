@@ -346,7 +346,7 @@ void main() {
   );
 
   test(
-    'Android ignores old comment and repeat preferences and rejects content links',
+    'Android hides social content, maps related autoplay, and rejects content links',
     () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);

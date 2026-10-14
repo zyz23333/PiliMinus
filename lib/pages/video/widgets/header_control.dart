@@ -39,7 +39,6 @@ import 'package:PiliPlus/pages/video/introduction/ugc/widgets/menu_row.dart';
 import 'package:PiliPlus/pages/video/widgets/header_mixin.dart';
 import 'package:PiliPlus/plugin/pl_player/controller.dart';
 import 'package:PiliPlus/plugin/pl_player/models/data_source.dart';
-import 'package:PiliPlus/plugin/pl_player/models/play_repeat.dart';
 import 'package:PiliPlus/services/shutdown_timer_service.dart'
     show shutdownTimerService, ShutdownPanel;
 import 'package:PiliPlus/utils/accounts.dart';
@@ -661,24 +660,23 @@ class HeaderControlState extends State<HeaderControl>
                     ),
                   ),
                 ],
-                if (!WatchLaterFocus.enabled)
-                  PopupListTile(
-                    dense: true,
-                    leading: const Icon(Icons.repeat, size: 20),
-                    title: const Text('播放顺序', style: titleStyle),
-                    titleStyle: theme.textTheme.bodyLarge,
-                    value: () {
-                      final value = plPlayerController.playRepeat;
-                      return (value, value.label);
-                    },
-                    itemBuilder: (_) => enumItemBuilder(PlayRepeat.values),
-                    onSelected: (value, setState) {
-                      plPlayerController.setPlayRepeat(value);
-                      setState();
-                    },
-                    descPosType: .subtitle,
-                    descStyle: subTitleStyle,
-                  ),
+                PopupListTile(
+                  dense: true,
+                  leading: const Icon(Icons.repeat, size: 20),
+                  title: const Text('播放顺序', style: titleStyle),
+                  titleStyle: theme.textTheme.bodyLarge,
+                  value: () {
+                    final value = plPlayerController.playRepeat;
+                    return (value, value.label);
+                  },
+                  itemBuilder: (_) => enumItemBuilder(Pref.playRepeatOptions),
+                  onSelected: (value, setState) {
+                    plPlayerController.setPlayRepeat(value);
+                    setState();
+                  },
+                  descPosType: .subtitle,
+                  descStyle: subTitleStyle,
+                ),
                 ListTile(
                   dense: true,
                   onTap: () {

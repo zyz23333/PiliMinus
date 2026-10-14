@@ -6,6 +6,7 @@ Platform: Android
 Priority: 减少观看时的选择与干扰，尽快得到可用版本
 Implemented: 2026-10-11
 Implementation: [实施与验证记录](implementation.md)
+Follow-up: [2026-10-14 播放顺序控制](../watch-later-playback-control/watch-later-playback-control-spec.md) 更新固定顺序播放与禁止合集循环的规则。
 
 ## Problem Statement
 

@@ -891,12 +891,28 @@ abstract final class Pref {
   static double get defaultToastOp =>
       _setting.get(SettingBoxKey.defaultToastOp, defaultValue: 1.0);
 
-  static PlayRepeat get playRepeat => WatchLaterFocus.enabled
-      ? PlayRepeat.listOrder
-      : PlayRepeat.values[_video.get(
+  static List<PlayRepeat> get playRepeatOptions => WatchLaterFocus.enabled
+      ? const [
+          PlayRepeat.pause,
+          PlayRepeat.listOrder,
+          PlayRepeat.singleCycle,
+          PlayRepeat.listCycle,
+        ]
+      : PlayRepeat.values;
+
+  static PlayRepeat get playRepeat {
+    final focused = WatchLaterFocus.enabled;
+    final value =
+        PlayRepeat.values[_video.get(
           VideoBoxKey.playRepeat,
-          defaultValue: PlayRepeat.pause.index,
+          defaultValue:
+              (focused ? PlayRepeat.listOrder : PlayRepeat.pause).index,
         )];
+    // The focused flow has no related videos to continue playing.
+    return focused && value == PlayRepeat.autoPlayRelated
+        ? PlayRepeat.listOrder
+        : value;
+  }
 
   static int get cacheVideoFit =>
       _video.get(VideoBoxKey.cacheVideoFit, defaultValue: 1);

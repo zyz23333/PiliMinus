@@ -44,7 +44,6 @@ class _CommonSettingState extends State<CommonSetting> {
                 '屏幕帧率',
               }.contains(item.title),
               SettingType.playSetting => !const {
-                '播放顺序',
                 '全屏展示点赞/投币/收藏等操作按钮',
                 'SuperChat (醒目留言) 显示类型',
                 '全屏 SC 大小',

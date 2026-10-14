@@ -10,7 +10,6 @@ import 'package:PiliPlus/pages/setting/widgets/select_dialog.dart';
 import 'package:PiliPlus/pages/setting/widgets/slider_dialog.dart';
 import 'package:PiliPlus/plugin/pl_player/models/bottom_progress_behavior.dart';
 import 'package:PiliPlus/plugin/pl_player/models/fullscreen_mode.dart';
-import 'package:PiliPlus/plugin/pl_player/models/play_repeat.dart';
 import 'package:PiliPlus/services/service_locator.dart';
 import 'package:PiliPlus/utils/android/android_helper.dart';
 import 'package:PiliPlus/utils/extension/num_ext.dart';
@@ -290,7 +289,7 @@ List<SettingsModel> get playSettings => [
     title: '播放顺序',
     leading: const Icon(Icons.repeat),
     value: () => Pref.playRepeat,
-    items: PlayRepeat.values,
+    items: Pref.playRepeatOptions,
     onSelected: (value, setState) => GStorage.video
         .put(VideoBoxKey.playRepeat, value.index)
         .whenComplete(setState),
